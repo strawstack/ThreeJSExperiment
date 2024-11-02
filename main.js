@@ -14,10 +14,13 @@
         const viewport = document.querySelector(".viewport");
         const view_size = viewport.getBoundingClientRect();
 
-        const scene = new THREE.Scene(); 
+        const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera( 
             75, view_size.width / view_size.height, 0.1, 1000 
-        ); 
+        );
+        const camera_group = new THREE.Group();
+        camera_group.add(camera);
+
         const renderer = new THREE.WebGLRenderer({
             canvas: viewport
         });
@@ -26,8 +29,11 @@
         const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
         const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } ); 
         const cube = new THREE.Mesh( geometry, material ); 
-        scene.add( cube ); 
-        camera.position.z = 5;
+        
+        camera_group.position.z = 5;
+        
+        scene.add( cube );
+        scene.add( camera_group );
 
         listenForKeys();
         startMouseLock(viewport);
@@ -39,6 +45,8 @@
             const { x, y } = getMouseMovement();
             if (x > 0) camera.rotation.y += ROT_SPEED;
             if (x < 0) camera.rotation.y -= ROT_SPEED;
+            if (y > 0) camera_group.rotation.x += ROT_SPEED;
+            if (y < 0) camera_group.rotation.x -= ROT_SPEED;
 
             // Movement
             const { w, a, s, d } = getKeys();
@@ -47,7 +55,7 @@
             if (a) vec.x -= MOVE_SPEED;
             if (s) vec.z += MOVE_SPEED;
             if (d) vec.x += MOVE_SPEED;
-            camera.position.add(vec);
+            camera_group.position.add(vec);
 
             renderer.render( scene, camera ); 
         } 

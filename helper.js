@@ -9,10 +9,6 @@ const helper = () => {
 
     const mouseMove = {x: 0, y: 0};
 
-    function example(value) {
-        console.log(value);
-    }
-
     function listenForKeys() {
         document.addEventListener("keydown", e => {
             keys[e.key] = true;
