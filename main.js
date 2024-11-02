@@ -39,6 +39,8 @@
         listenForKeys();
         startMouseLock(viewport);
 
+        const UP = new THREE.Vector3(0, 1, 0);
+
         function animate() {
             cube.rotation.x += 0.01; cube.rotation.y += 0.01;
 
@@ -49,9 +51,16 @@
             if (y > 0) camera.rotation.x += -1 * y * ROT_SPEED;
             if (y < 0) camera.rotation.x += -1 * y * ROT_SPEED;
 
-            // TODO these can be tilted up and down but should only exist on the flat plane
-            const FORWARD = new THREE.Vector3(0, 0, -1).transformDirection( camera.matrixWorld );
-            const LEFT = new THREE.Vector3(-1, 0, 0).transformDirection( camera.matrixWorld );
+            const FORWARD = new THREE
+                .Vector3(0, 0, -1).
+                transformDirection(camera.matrixWorld)
+                .projectOnPlane(UP)
+                .normalize();
+            const LEFT = new THREE
+                .Vector3(-1, 0, 0)
+                .transformDirection(camera.matrixWorld)
+                .projectOnPlane(UP)
+                .normalize();
 
             // Movement
             const { w, a, s, d, shift } = getKeys();
