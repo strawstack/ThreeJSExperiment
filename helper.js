@@ -5,16 +5,19 @@ const helper = () => {
         a: false,
         s: false,
         d: false,
+        shift: false
     };
 
     const mouseMove = {x: 0, y: 0};
 
     function listenForKeys() {
         document.addEventListener("keydown", e => {
-            keys[e.key] = true;
+            keys[e.key.toLowerCase()] = true;
+            keys["shift"] = e.shiftKey;
         });
         document.addEventListener("keyup", e => {
-            keys[e.key] = false;
+            keys[e.key.toLowerCase()] = false;
+            keys["shift"] = e.shiftKey;
         });
     }
 

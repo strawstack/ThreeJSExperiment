@@ -7,8 +7,9 @@
         getMouseMovement,
     } = helper();
 
-    const ROT_SPEED = 0.05;
+    const ROT_SPEED = 0.005;
     const MOVE_SPEED = 0.05;
+    const RUN_SPEED = 0.1;
 
     function main() {
         const viewport = document.querySelector(".viewport");
@@ -43,19 +44,24 @@
 
             // Rotation
             const { x, y } = getMouseMovement();
-            if (x > 0) camera.rotation.y += ROT_SPEED;
-            if (x < 0) camera.rotation.y -= ROT_SPEED;
-            if (y > 0) camera_group.rotation.x += ROT_SPEED;
-            if (y < 0) camera_group.rotation.x -= ROT_SPEED;
+            if (x > 0) camera_group.rotation.y += -1 * x * ROT_SPEED;
+            if (x < 0) camera_group.rotation.y += -1 * x * ROT_SPEED;
+            if (y > 0) camera.rotation.x += -1 * y * ROT_SPEED;
+            if (y < 0) camera.rotation.x += -1 * y * ROT_SPEED;
+
+            // TODO these can be tilted up and down but should only exist on the flat plane
+            const FORWARD = new THREE.Vector3(0, 0, -1).transformDirection( camera.matrixWorld );
+            const LEFT = new THREE.Vector3(-1, 0, 0).transformDirection( camera.matrixWorld );
 
             // Movement
-            const { w, a, s, d } = getKeys();
+            const { w, a, s, d, shift } = getKeys();
             const vec = new THREE.Vector3( 0, 0, 0 );
-            if (w) vec.z -= MOVE_SPEED;
-            if (a) vec.x -= MOVE_SPEED;
-            if (s) vec.z += MOVE_SPEED;
-            if (d) vec.x += MOVE_SPEED;
-            camera_group.position.add(vec);
+            if (w) vec.add(FORWARD);
+            if (a) vec.add(LEFT);
+            if (s) vec.add(FORWARD.multiplyScalar(-1));
+            if (d) vec.add(LEFT.multiplyScalar(-1));
+            // console.log(w,a,s,d)
+            camera_group.position.add(vec.normalize().multiplyScalar(shift ? RUN_SPEED : MOVE_SPEED));
 
             renderer.render( scene, camera ); 
         } 
