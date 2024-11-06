@@ -4,10 +4,18 @@
 
     } = helper();
 
+    const {
+        fogParsVert,
+        fogVert,
+        fogParsFrag,
+        fogFrag
+    } = fogReplace();
+
     function main() {
         const viewport = document.querySelector(".viewport");
         const view_size = viewport.getBoundingClientRect();
         
+        const clock = new THREE.Clock();
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera( 
             75, view_size.width / view_size.height, 0.1, 1000 
@@ -26,18 +34,75 @@
         const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } ); 
         const cube = new THREE.Mesh( geometry, material ); 
 
+        const params = {
+            fogNearColor: 0xfc4848,
+            fogHorizonColor: 0xe4dcff,
+            fogDensity: 0.0025,
+            fogNoiseSpeed: 100,
+            fogNoiseFreq: 0.0012,
+            fogNoiseImpact: 0.5
+        };
+
+        scene.background = new THREE.Color(params.fogHorizonColor);
+        scene.fog = new THREE.FogExp2(params.fogHorizonColor, params.fogDensity);
+
+        const fogBox = new THREE.Mesh(
+            new THREE.BoxGeometry( 10, 1, 10 ),
+            new THREE.MeshBasicMaterial({ color: new THREE.Color(0xefd1b5) })
+        );
+        
+        fogBox.position.y = -1;
+
+        let terrainShader = null;
+        fogBox.material.onBeforeCompile = shader => {
+            shader.vertexShader = shader.vertexShader.replace(
+                `#include <fog_pars_vertex>`,
+                fogParsVert
+            );
+            shader.vertexShader = shader.vertexShader.replace(
+                `#include <fog_vertex>`,
+                fogVert
+            );
+            shader.fragmentShader = shader.fragmentShader.replace(
+                `#include <fog_pars_fragment>`,
+                fogParsFrag
+            );
+            shader.fragmentShader = shader.fragmentShader.replace(
+                `#include <fog_fragment>`,
+                fogFrag
+            );
+        
+            const uniforms = ({
+                fogNearColor: { value: new THREE.Color(params.fogNearColor) },
+                fogNoiseFreq: { value: params.fogNoiseFreq },
+                fogNoiseSpeed: { value: params.fogNoiseSpeed },
+                fogNoiseImpact: { value: params.fogNoiseImpact },
+                time: { value: 0 }
+            });
+        
+            shader.uniforms = THREE.UniformsUtils.merge([shader.uniforms, uniforms]);
+            terrainShader = shader;
+        };
+        
+        scene.add( fogBox );
         scene.add( cube );
         scene.add( camera_group );
 
         const { animate: fpAnimate } = firstPersonMovement({ camera, camera_group, viewport });
 
         function animate() {
+            const deltaTime = clock.getDelta();
+
             cube.rotation.x += 0.01; 
             cube.rotation.y += 0.01;
 
             fpAnimate();
 
             renderer.render( scene, camera ); 
+
+            if(terrainShader) {
+                terrainShader.uniforms.time.value += deltaTime;
+            }
         } 
         renderer.setAnimationLoop( animate );
     }
