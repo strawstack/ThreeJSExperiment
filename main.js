@@ -37,7 +37,7 @@
         const params = {
             fogNearColor: 0xfc4848,
             fogHorizonColor: 0xe4dcff,
-            fogDensity: 0.0025,
+            fogDensity: 0.15, // 0.0025,
             fogNoiseSpeed: 100,
             fogNoiseFreq: 0.0012,
             fogNoiseImpact: 0.5
