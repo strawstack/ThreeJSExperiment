@@ -18,7 +18,7 @@
         const clock = new THREE.Clock();
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera( 
-            75, view_size.width / view_size.height, 0.1, 1000 
+            75, view_size.width / view_size.height, 0.1, 1000
         );
         
         const camera_group = new THREE.Group();
@@ -31,8 +31,8 @@
         renderer.setSize( view_size.width, view_size.height );
 
         const geometry = new THREE.BoxGeometry( 1, 1, 1 ); 
-        const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } ); 
-        const cube = new THREE.Mesh( geometry, material ); 
+        const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        const cube = new THREE.Mesh( geometry, material );
 
         const params = {
             fogNearColor: 0xfc4848,
@@ -46,15 +46,17 @@
         scene.background = new THREE.Color(params.fogHorizonColor);
         scene.fog = new THREE.FogExp2(params.fogHorizonColor, params.fogDensity);
 
+        const fog_material = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xefd1b5) });
+
         const fogBox = new THREE.Mesh(
             new THREE.BoxGeometry( 10, 1, 10 ),
-            new THREE.MeshBasicMaterial({ color: new THREE.Color(0xefd1b5) })
+            fog_material
         );
         
         fogBox.position.y = -1;
 
         let terrainShader = null;
-        fogBox.material.onBeforeCompile = shader => {
+        fog_material.onBeforeCompile = shader => {
             shader.vertexShader = shader.vertexShader.replace(
                 `#include <fog_pars_vertex>`,
                 fogParsVert
@@ -84,6 +86,12 @@
             terrainShader = shader;
         };
         
+        const cubes = Array(10).fill(0).map(_ => new THREE.Mesh( geometry, fog_material ));
+        cubes.forEach((cube, i) => {
+            cube.position.x = 5 + i * 5;
+            scene.add(cube);
+        });
+
         scene.add( fogBox );
         scene.add( cube );
         scene.add( camera_group );
