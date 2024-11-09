@@ -1,6 +1,13 @@
 (() => {
     const { } = helper();
 
+    const {
+        COLS,
+        ROWS,
+        grid,
+        openWalls
+    } = kruskal_main();
+
     function main() {
         const scene = new THREE.Scene();
         const { fog_material, fogAnimate } = fog({ scene });
