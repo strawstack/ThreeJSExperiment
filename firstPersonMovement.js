@@ -1,11 +1,11 @@
-function firstPersonMovement({ camera, camera_group, viewport }) {
+function firstPersonMovement({ camera, camera_group, viewport, help }) {
 
     const {
         listenForKeys,
         startMouseLock,
         getKeys,
         getMouseMovement,
-    } = helper();
+    } = help;
 
     const ROT_SPEED = 0.005;
     const MOVE_SPEED = 0.05;
@@ -32,7 +32,7 @@ function firstPersonMovement({ camera, camera_group, viewport }) {
             .normalize();
 
         // Movement
-        const { w, a, s, d, shift } = getKeys();
+        const { keyw: w, keya: a, keys: s, keyd: d, shiftleft: shift } = getKeys();
         const vec = new THREE.Vector3( 0, 0, 0 );
         if (w) vec.add(FORWARD);
         if (a) vec.add(LEFT);

@@ -1,23 +1,22 @@
 const helper = () => {
 
     const keys = {
-        w: false,
-        a: false,
-        s: false,
-        d: false,
-        shift: false
+        keyw: false,
+        keya: false,
+        keys: false,
+        keyd: false,
+        shiftleft: false,
+        space: false
     };
 
     const mouseMove = {x: 0, y: 0};
 
     function listenForKeys() {
         document.addEventListener("keydown", e => {
-            keys[e.key.toLowerCase()] = true;
-            keys["shift"] = e.shiftKey;
+            keys[e.code.toLowerCase()] = true;
         });
         document.addEventListener("keyup", e => {
-            keys[e.key.toLowerCase()] = false;
-            keys["shift"] = e.shiftKey;
+            keys[e.code.toLowerCase()] = false;
         });
     }
 

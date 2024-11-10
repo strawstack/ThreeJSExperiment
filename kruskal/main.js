@@ -85,6 +85,8 @@ function kruskal_main() {
     }
 
     return {
+        WIDTH,
+        HEIGHT,
         createWalls
     };
 }

@@ -1,7 +1,12 @@
 (() => {
-    const { } = helper();
+    const help = helper();
+    const {
+        getKeys
+    } = help;
 
     const {
+        WIDTH,
+        HEIGHT,
         createWalls
     } = kruskal_main();
 
@@ -21,15 +26,16 @@
         );
 
         camera2.position.x = 500;
-        camera2.position.y = 800;
+        camera2.position.y = 500;
         camera2.position.z = 300;
         camera2.rotateX(-1 * Math.PI/2);
         
         const camera_group = new THREE.Group();
         camera_group.add(camera);
-        camera_group.position.z = 5;
+        camera_group.position.x = WIDTH/2;
+        camera_group.position.z = HEIGHT/2;
         
-        const { animate: fpAnimate } = firstPersonMovement({ camera, camera_group, viewport });
+        const { animate: fpAnimate } = firstPersonMovement({ camera, camera_group, viewport, help });
 
         const renderer = new THREE.WebGLRenderer({
             canvas: viewport
@@ -61,12 +67,13 @@
         createWalls({ scene });
 
         function animate() {
+            const { space } = getKeys();
             // cube.rotation.x += 0.01; 
             // cube.rotation.y += 0.01;
 
             fpAnimate();
             
-            renderer.render( scene, camera2 ); 
+            renderer.render( scene, space ? camera2 : camera );
 
             // fogAnimate();
         } 
