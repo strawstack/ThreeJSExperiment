@@ -62,11 +62,14 @@ const kruskal_helper = () => {
         setCSSVar("--canvas-width", `${WIDTH}px`);
         setCSSVar("--canvas-height", `${HEIGHT}px`);
 
+        const c = bigrooms(resize(Array(COLS).fill(BASE_SIZE), 1, r => r % 2 === 1, 16));
+        const r = bigrooms(resize(Array(ROWS).fill(BASE_SIZE), 1, r => r % 2 === 1, 16));
+
         return {
-            COLS: bigrooms(resize(Array(COLS).fill(BASE_SIZE), 1, r => r % 2 === 1, 16)),
-            ROWS: bigrooms(resize(Array(ROWS).fill(BASE_SIZE), 1, r => r % 2 === 1, 16)),
-            WIDTH,
-            HEIGHT
+            COLS: c,
+            ROWS: r,
+            WIDTH: c.reduce((a, v) => a + v),
+            HEIGHT: r.reduce((a, v) => a + v)
         };
     }
 

@@ -43,11 +43,11 @@ function kruskal_main() {
 
         const wall = (p, mat) => {
             const mesh = new THREE.Mesh(
-                new THREE.BoxGeometry( p.width, 0.5, p.height ), 
+                new THREE.BoxGeometry( p.width, 5, p.height ), 
                 mat
             );
             mesh.position.x = p.x;
-            mesh.position.y = -0.5;
+            mesh.position.y = 2.5;
             mesh.position.z = p.y;
             scene.add(mesh);
         };
@@ -64,16 +64,14 @@ function kruskal_main() {
                 if (getType(x, y) === type.WALL) {
                     mat = new THREE.MeshBasicMaterial({ 
                         color: 0x0000ff,
-                        opacity: 0.5,
+                        opacity: 0.8,
                         transparent: true
                     });
                 }
 
                 if (getType(x, y) === type.POST) {
                     mat = new THREE.MeshBasicMaterial({ 
-                        color: 0xff0000,
-                        opacity: 0.5,
-                        transparent: true
+                        color: 0x0000ff,
                     });
                 }
 
