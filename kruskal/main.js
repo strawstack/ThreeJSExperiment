@@ -1,8 +1,5 @@
 function kruskal_main() {
 
-    // const canvas = document.querySelector("canvas");
-    // const ctx = canvas.getContext("2d");
-
     const {
         prefix,
         sizes,
@@ -32,25 +29,62 @@ function kruskal_main() {
         [type.ROOM]: "#333",
     };
 
-    // canvas.width = WIDTH;
-    // canvas.height = HEIGHT;
-
     const openWalls = kruskal(Object.values(grid.walls), unionFind(Object.keys(grid.rooms)));
     
-    // Draw
-    /*
-    ROWS.forEach((h, y) => {
-        COLS.forEach((w, x) => {
-            ctx.fillStyle = colourLookup[getType(x, y)];
-            if (openWalls.includes(hash(x, y))) ctx.fillStyle = colourLookup[type.ROOM];
-            ctx.fillRect(COLS_PRE[x], ROWS_PRE[y], COLS[x], ROWS[y]);
+    function createWalls({ scene }) {
+        const pos = (x, y) => {
+            return {
+                x: COLS_PRE[x] + COLS[x]/2,
+                y: ROWS_PRE[y] + ROWS[y]/2,
+                width: COLS[x],
+                height: ROWS[y]
+            };
+        }
+
+        const wall = (p, mat) => {
+            const mesh = new THREE.Mesh(
+                new THREE.BoxGeometry( p.width, 0.5, p.height ), 
+                mat
+            );
+            mesh.position.x = p.x;
+            mesh.position.y = -0.5;
+            mesh.position.z = p.y;
+            scene.add(mesh);
+        };
+
+        ROWS.forEach((h, y) => {
+            COLS.forEach((w, x) => {
+
+                let mat = new THREE.MeshBasicMaterial({ 
+                    color: 0x00ff00,
+                    opacity: 0.5,
+                    transparent: true
+                });
+
+                if (getType(x, y) === type.WALL) {
+                    mat = new THREE.MeshBasicMaterial({ 
+                        color: 0x0000ff,
+                        opacity: 0.5,
+                        transparent: true
+                    });
+                }
+
+                if (getType(x, y) === type.POST) {
+                    mat = new THREE.MeshBasicMaterial({ 
+                        color: 0xff0000,
+                        opacity: 0.5,
+                        transparent: true
+                    });
+                }
+
+                if (!openWalls.includes(hash(x, y)) && getType(x, y) !== type.ROOM) {
+                    wall(pos(x, y), mat);
+                }
+            });
         });
-    }); */
+    }
 
     return {
-        COLS: COLS.length,
-        ROWS: ROWS.length,
-        grid,
-        openWalls
+        createWalls
     };
 }
